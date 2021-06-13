@@ -38,8 +38,8 @@ public:
     SNode (T const& it, SNode<T>::Ref& next)
     {
         //TODO
-        it_ = it;
-        next_ = next;
+      it_ = it;
+      next_ = next;
     }
 
     /**
@@ -77,7 +77,7 @@ public:
     bool has_next() const
     {
         //TODO
-        return next_ != nullptr;
+        return next_ != nullptr ;
     }
 
     /** @brief Get the link to next element.*/
@@ -96,14 +96,14 @@ public:
     void set_item(const T& new_it)
     {
         //TODO
-        it_ = new_it;
+      it_ = new_it;
     }
 
     /** @brief Set the link to the next node.*/
     void set_next(SNode<T>::Ref next)
     {
         //TODO
-        next_ = next;
+      next_ = next;
     }
 
 protected:
@@ -160,7 +160,7 @@ class SList
    * @brief Create a SList unfoldig from an input stream.
    *
    * The input format will be "[]" for the empty list
-   * or "[" item1 item2 ... item_n "]" where item1 is the head.
+   * or "[" item1 item2 ... it_n "]" where item1 is the head.
    *
    * @param in is the input stream.
    * @warning if the input format is not correct a std::runtime_error with
@@ -173,40 +173,50 @@ class SList
 
       //TODO
       //Hint: use std::istringstream to convert a token into generic T type.
+
       std::string input;
       in >> input;
-      if (input == "[]")
+      if(input == "[]")
       {
-          return list;
+      	return list;
       }
       else if(input=="[")
       {
-          while (in >> input)
-          {
-              if (input == "]")
-                  break;
-              std::istringstream convert(input);
-              T new_it;
-              convert >> new_it;
-              if (list->is_empty())
-              {
-                  list->insert(new_it);
-              }
-              else
-              {
-                  if (list->has_next())
-                      list->goto_next();
-                  list->insert(new_it);
-              }
-         }
-          if (input != "]")
-              std::cout << "Wrong input format";
+      	while(in >> input)
+      	{
+      		if(input=="]")
+      			break;
+
+      		std::istringstream convert(input);
+      		T new_item;
+      		convert >> new_item;
+
+      		if(list->is_empty())
+      		{
+      			list->insert(new_item);
+      		}
+      		else
+      		{
+      			if(list->has_next())
+      				list->goto_next();
+      			list->insert(new_item);
+      		}
+      	}
+
+      	if(input!="]")
+      	{
+      		std::cout << "Wrong input format." ;
+      	}
       }
       else
       {
-          std::cout << "Wrong input format";
+      	std::cout << "Wrong input format." ;
       }
-      return list;
+
+  	
+  	return list;
+
+     
   }
 
   /** @}*/
@@ -276,25 +286,28 @@ class SList
   bool has(T const& it) const
   {
       //TODO
-      auto aux = head_;
       bool found = false;
-      while (aux != nullptr)
+
+      auto ptr_aux = head_;
+
+      while(ptr_aux!=nullptr)
       {
-          if (aux->item() == it)
-          {
-              found = true;
-              break;
-          }
-          aux = aux->next();
+        if(ptr_aux->item()==it)
+        {
+          found=true;
+          break;
+        }
+        ptr_aux = ptr_aux->next();
       }
 
       return found;
+
   }
 
   /**
    * @brief Fold to an output stream.
    *
-   * The format will be "[]" for the empty list or  '[' item1 item2 item3 ... item_n ']'
+   * The format will be "[]" for the empty list or  '[' item1 item2 item3 ... it_n ']'
    * where item1 is the head.
    *
    * @param out is the output stream.
@@ -304,20 +317,31 @@ class SList
   void fold(std::ostream& out) const
   {
       //TODO
-      if (is_empty())
-          out << "[]";
+
+      if(is_empty())
+      {
+        out << "[]";
+      }
       else
       {
-          out << "[";
-          auto aux = head_;
-          while (aux != nullptr)
-          {
-              out << aux->item();
-              out << " ";
-              aux = aux->next();
-          }
-          out << "]";
+
+        out << "[ ";
+
+        auto ptr_aux = head_;
+
+        while(ptr_aux != nullptr)
+        {
+          out << ptr_aux->item() ;
+
+          out <<  " ";
+
+          ptr_aux = ptr_aux->next();
+        }
+
+        out << "]";
+
       }
+
   }
 
   /**@}*/
@@ -336,7 +360,8 @@ class SList
   {
       assert(!is_empty());
       //TODO
-      current_->set_item(new_v);
+      cursor_->set_item(new_v);
+
       assert(current()==new_v);
   }
 
@@ -349,9 +374,13 @@ class SList
   void push_front(T const& new_it)
   {
       //TODO
-      auto node = SNode<T>::create(new_it, head_);
-      cursor_ = node;
-      head_ = node;
+
+      auto nuevo_nodo = SNode<T>::create(new_it,head_);
+
+      head_ = nuevo_nodo;
+
+      cursor_ = nuevo_nodo;
+
       assert(front()==new_it);
   }
 
@@ -372,17 +401,22 @@ class SList
 #endif
 
       //TODO
-      if (is_empty())
+
+      if(is_empty())
       {
-          auto nuevo = SNode<T>::create(new_it, nullptr);
-          head_ = nuevo;
-          cursor_ = nuevo;
+        auto nuevo = SNode<T>::create(new_it,nullptr);
+        head_ = nuevo;
+        cursor_ = nuevo;
       }
       else
       {
-          auto nuevo = SNode<T>::create(new_it, cursor_->next());
-          cursor_->set_next(nuevo);
+        auto nuevo = SNode<T>::create(new_it,cursor_->next());
+        
+        cursor_->set_next(nuevo);
       }
+      
+
+
       assert(!old_is_empty || (front()==new_it && current()==new_it));
       assert(old_is_empty || (old_item == current() && has_next() && next()==new_it));
   }
@@ -396,6 +430,7 @@ class SList
   {
       assert(!is_empty());
       //TODO
+
       head_ = head_->next();
       cursor_ = head_;
   }
@@ -420,31 +455,43 @@ class SList
       //TODO:
       //Study three cases: remove from head, remove from last and
       //remove from middle.
-      if (cursor_ == head_)
+
+      if(cursor_==head_)
       {
-          head_ = head_->next();
-          cursor_ = head_;
+        head_ = head_->next();
+
+        cursor_ = head_;
       }
-      else if (cursor_->next() == nullptr)
+      else if(cursor_->next()==nullptr)
       {
-          auto aux = head_;
-          while (aux->next() != cursor_)
-          {
-              aux = aux->next();
-          }
-          aux->set_next(nullptr);
-          cursor_ = aux;
+
+        auto ptr_anterior = head_;
+
+        while(ptr_anterior->next() != cursor_)
+        {
+          ptr_anterior = ptr_anterior->next();
+        }
+
+        ptr_anterior->set_next(nullptr);
+
+        cursor_ = ptr_anterior;
       }
       else
       {
-          auto aux = head_;
-          while (aux->next() != cursor_)
-          {
-              aux = aux->next();
-          }
-          aux->set_next(cursor_->next());
-          cursor_ = aux->next();
+        auto ptr_anterior = head_;
+
+        while(ptr_anterior->next() != cursor_)
+        {
+          ptr_anterior = ptr_anterior->next();
+        }
+
+        ptr_anterior->set_next(cursor_->next());
+
+        cursor_ = ptr_anterior->next();
       }
+
+
+
       assert(!old_has_next || current()==old_next);
   }
 
@@ -462,6 +509,7 @@ class SList
 
       //TODO
       cursor_ = cursor_->next();
+
       assert(current()==old_next);
   }
 
@@ -475,6 +523,7 @@ class SList
       assert(!is_empty());
       //TODO
       cursor_ = head_;
+
       assert(current()==front());
   }
 
@@ -492,13 +541,19 @@ class SList
       assert(!is_empty());
       bool found = false;
       //TODO
+
       cursor_ = head_;
-      while (cursor_ != nullptr)
+
+      while(cursor_!=nullptr and current() != it)
       {
-          if (cursor_->item() == it)
-              found = true;
-          cursor_ = cursor_->next();
+        cursor_ = cursor_->next();
       }
+
+      if(cursor_!=nullptr)
+      {
+        found = true;
+      }
+
 
       assert(!found || current()==it);
       assert(found || !has_next());
@@ -519,13 +574,17 @@ class SList
       assert(has_next());
       bool found = false;
       //TODO
+
       cursor_ = cursor_->next();
-      while (cursor_ != nullptr)
+      while(cursor_!=nullptr and current() != it)
       {
-          if (cursor_->item() == it)
-              found = true;
-          cursor_ = cursor_->next();
+        cursor_ = cursor_->next();
       }
+      if(cursor_!=nullptr)
+      {
+        found = true;
+      }
+
       assert(!found || current()==it);
       assert(found || !has_next());
       return found;
@@ -537,8 +596,10 @@ class SList
 protected:
 
   //TODO
-    SNode<T>::Ref head_;
-    SNode<T>::Ref cursor_;
+
+  typename SNode <T> ::Ref head_;
+  typename SNode <T> ::Ref cursor_;
+
 };
 
 #endif //ED_SList
